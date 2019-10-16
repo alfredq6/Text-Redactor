@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TextRedactor.Data.Interfaces;
 
-namespace TextRedactor.Data.Models
+namespace TextRedactor.Models
 {
-    public class User : IModel
+    public class AuthorizeViewModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
+        public string RepeatePassword { get; set; }
     }
 }

@@ -1,0 +1,27 @@
+﻿@model AuthorizeViewModel
+
+<div class="auth-container">
+    <div class="auth-block">
+        <form asp-controller="Account" asp-action="SignUp" method="post">
+            <div class="field-block">
+                <span>Name:</span>
+                <input asp-for="Name" class="form-control" type="text" placeholder="Enter user name" />
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+            <div class="field-block">
+                <span>Password:</span>
+                <input asp-for="Password" class="form-control" type="password" placeholder="Enter user password" />
+                <span class="text-danger" asp-validation-for="Password"></span>
+            </div>
+                <div class="field-block">
+                    <span>Repeate password:</span>
+                    <input asp-for="RepeatePassword" class="form-control" type="password" placeholder="Enter password again" />
+                    <span class="text-danger" asp-validation-for="RepeatePassword"></span>
+                </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger field-block"></div>
+            <div class="field-block">
+                <button class="btn btn-info" type="submit">Sign up</button>
+            </div>
+        </form>
+    </div>
+</div>
