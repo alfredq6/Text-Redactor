@@ -15,3 +15,15 @@
 .field-block {
     padding: 10px;
 }
+
+.inline-container div {
+    display: inline-block;
+}
+
+.block-float-right {
+    float: right;
+}
+
+.block-float-left {
+
+}

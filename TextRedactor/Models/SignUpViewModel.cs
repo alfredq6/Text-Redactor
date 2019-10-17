@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextRedactor.Models
 {
-    public class AuthorizeViewModel
+    public class SignUpViewModel
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Field is required")]
         [StringLength(10, MinimumLength = 2, ErrorMessage = "Name length should be > 1 and < 11")]

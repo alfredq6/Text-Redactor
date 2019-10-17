@@ -23,7 +23,7 @@ namespace TextRedactor.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult SignIn(AuthorizeViewModel model)
+        public IActionResult SignIn(SignInViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -41,7 +41,7 @@ namespace TextRedactor.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult SignUp(AuthorizeViewModel model)
+        public IActionResult SignUp(SignUpViewModel model)
         {
             try
             {
@@ -52,9 +52,8 @@ namespace TextRedactor.Controllers
                         userRepository.Create(model.Name, model.Password);
                         return RedirectToAction("Index", "Home");
                     }
-                    ModelState.AddModelError(string.Empty, "Repeate password field isn't equals password field");
+                    ModelState.AddModelError(string.Empty, "Repeated password isn't equals password");
                 }
-                return View(model);
             }
             catch (SQLiteException)
             {
