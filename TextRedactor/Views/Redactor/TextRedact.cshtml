@@ -1,0 +1,28 @@
+﻿@model TextRedactViewModel
+
+<link href="~/css/redactor.css" rel="stylesheet" />
+
+<div class="container" style="margin-top: 300px;">
+    <div>
+        <textarea class="form-control" placeholder="Enter something" rows="5"></textarea>
+    </div>
+    <button class="btn btn-success" id="btn-suc">Success</button>
+    <div>
+        <span id="correct_text"></span>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+<script>
+    $('#btn-suc').click(() => {
+        let words = $('textarea').text().replace(/[\W\d]/g, " ").split(" ");
+        let correct_words = "";
+        for (let i = 0; i < words.length; i++) {
+            if (words[i].length >= 4)
+                correct_words += ("<span class='word'>" + words[i] + " " + "</span>");
+        }
+        $("#correct_text").html(correct_words);
+    })
+</script>
