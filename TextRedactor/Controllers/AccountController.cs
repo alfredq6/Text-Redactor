@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +25,14 @@ namespace TextRedactor.Controllers
         [HttpPost]
         public IActionResult SignIn(AuthorizeViewModel model)
         {
-            if (!userRepository.CheckUserSignIn(model.Name, model.Password))
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Invalid name or pasword");
-                return RedirectToAction("SignUp");
+                if (!userRepository.CheckUserSignIn(model.Name, model.Password))
+                    ModelState.AddModelError(string.Empty, "Invalid name or password");
+                else
+                    return RedirectToAction("Index", "Home");
             }
-            else
-                return RedirectToAction("Index", "Home");
+            return View(model);
         }
 
         [HttpGet]
@@ -41,10 +43,22 @@ namespace TextRedactor.Controllers
         [HttpPost]
         public IActionResult SignUp(AuthorizeViewModel model)
         {
-            if (model.Password == model.RepeatePassword)
+            try
             {
-                userRepository.Create(model.Name, model.Password);
-                return RedirectToAction("Index", "Home");
+                if (ModelState.IsValid)
+                {
+                    if (model.Password == model.RepeatePassword)
+                    {
+                        userRepository.Create(model.Name, model.Password);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    ModelState.AddModelError(string.Empty, "Repeate password field isn't equals password field");
+                }
+                return View(model);
+            }
+            catch (SQLiteException)
+            {
+                ModelState.AddModelError(string.Empty, "The user name already exist");
             }
             return View(model);
         }
