@@ -1,3 +1,52 @@
 ﻿.word:hover {
     background-color: #fff393;
 }
+
+.word {
+    position: relative;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#btn-suc {
+    margin: 10px 0 10px 0;
+}
+
+textarea {
+    resize: none;
+}
+
+.word .popup {
+    font-weight: 100;
+    font-size: 12px;
+    display: none;
+    width: 160px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -80px;
+}
+
+.word .popup::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
