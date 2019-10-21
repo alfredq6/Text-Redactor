@@ -6,7 +6,7 @@
     <div>
         <textarea class="form-control" placeholder="Enter something" rows="5"></textarea>
     </div>
-    <button class="btn btn-success" id="btn-suc">Success</button><br />
+    <button class="btn btn-info" id="btn-suc">Detect</button><br />
     <div>
         <div id="correct_text"></div>
     </div>
@@ -18,31 +18,37 @@
 <script>
     $(document).ready(() => {
         $('#btn-suc').click(() => {
+            var correct_words = [];
             let words = $('textarea').val().toString().replace(/[!"#$%&'()*+,-./:;<=>?[\]^_`{|}~0123456789]/g, " ").split(" ");
-            let correct_words = "";
             for (let i = 0; i < words.length; i++) {
-                if (words[i].length >= 4)
-                    correct_words += ("<span class='word'>" + words[i] + " " + "<span class='popup' style='display: none'></span></span>");
+                if (words[i].length >= 4) {
+                    correct_words.push(words[i]);
+                }
             }
-            $("#correct_text").html(correct_words);
-        });
-        $('#correct_text').delegate(".word", "click", function () {
-            let popup = $(this).children('.popup');
             $.ajax({
                 type: 'POST',
-                data: { text: $(this).text() },
-                url: '/Redactor/DetectLanguage',
+                data: { words: correct_words },
+                url: '/Redactor/DetectLanguages',
                 async: true,
                 success: function (result) {
-                    let list = "<ul>";
+                    let correct_words_view = "";
                     for (let i = 0; i < result.length; i++) {
-                        list += "<li>" + result[i].language + " - " + result[i].confidence + "%</li>";
+                        let languages_list = "<ul>";
+                        for (let j = 0; j < result[i].languages.length; j++) {
+                            languages_list += "<li>" + result[i].languages[j].language + " - " + result[i].languages[j].confidence + "%</li>";
+                        }
+                        languages_list += "</ul>"
+                        correct_words_view += ("<span class='word'>" + result[i].text + " <span class='popup' style='display: none'>" + languages_list + "</span></span>");
                     }
-                    list += "</ul>"
-                    popup.html(list);
-                    popup.toggle('fast');
+                    $('#correct_text').html(correct_words_view);
                 }
             })
+        });
+        $("#correct_text").delegate('.word', 'mouseenter', function () {
+            $(this).children('.popup').toggle('fast');
+        });
+        $("#correct_text").delegate('.word', 'mouseleave', function () {
+            $(this).children('.popup').toggle('fast');
         });
     });
 </script>

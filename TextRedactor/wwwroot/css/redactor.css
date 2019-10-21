@@ -16,7 +16,9 @@
 }
 
 #btn-suc {
-    margin: 10px 0 10px 0;
+    margin: 10px 30px 10px 30px;
+    padding: 10px 0 10px 0;
+    font-size: 20pt;
 }
 
 textarea {

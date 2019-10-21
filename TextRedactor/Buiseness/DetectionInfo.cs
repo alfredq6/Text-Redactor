@@ -7,8 +7,7 @@ namespace TextRedactor.Buiseness
 {
     public class DetectionInfo
     {
-        public string language { get; set; }
-        public bool isReliable { get; set; }
-        public float confidence { get; set; }
+        public string text { get; set; }
+        public List<LanguagesInfo> languages { get; set; }
     }
 }

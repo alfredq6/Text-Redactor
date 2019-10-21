@@ -30,15 +30,12 @@ namespace TextRedactor.Controllers
         }
 
         [HttpPost]
-        public IActionResult DetectLanguage(string text)
+        public async Task<IActionResult> DetectLanguages(IEnumerable<string> words)
         {
             if (CurrentUser != null)
             {
                 var detector = new Detector();
-                IRestResponse response = detector.SendRequestToDetect(text);
-                var result = JsonConvert.DeserializeObject<DetectionResult>(response.Content);
-                DetectionInfo detection = result.data.detections[0];
-                return Json(detector.GetDetectedLanguages(detection));
+                return Json(detector.GetDetectedWords(await detector.DetectLanguages(words)));
             }
             else
             {

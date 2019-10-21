@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Google.Cloud.Translation.V2;
+using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
@@ -9,67 +10,63 @@ namespace TextRedactor.Buiseness
 {
     public class Detector
     {
-        public RestClient RestClient { get; private set; }
-
-        public Detector()
+        public List<LanguagesInfo> GetDetectedLanguages(Detection detection)
         {
-            InitializeRestClient();
-        }
-
-        public List<DetectionInfo> GetDetectedLanguages(DetectionInfo detection)
-        {
-            var list = new List<DetectionInfo>();
-            list.Add(new DetectionInfo() { language = "English", confidence = ConfidenceOfLanguage(detection, "en") });
-            list.Add(new DetectionInfo() { language = "Spanish", confidence = ConfidenceOfLanguage(detection, "es") });
-            list.Add(new DetectionInfo() { language = "Portuguese", confidence = ConfidenceOfLanguage(detection, "pt") });
-            list.Add(new DetectionInfo() { language = "Bulgarian", confidence = ConfidenceOfLanguage(detection, "bg") });
-            list.Add(new DetectionInfo() { language = "Russian", confidence = ConfidenceOfLanguage(detection, "ru") });
+            var list = new List<LanguagesInfo>();
+            list.Add(new LanguagesInfo() { language = "English", confidence = ConfidenceOfLanguage(detection, "en") });
+            list.Add(new LanguagesInfo() { language = "Spanish", confidence = ConfidenceOfLanguage(detection, "es") });
+            list.Add(new LanguagesInfo() { language = "Portuguese", confidence = ConfidenceOfLanguage(detection, "pt") });
+            list.Add(new LanguagesInfo() { language = "Bulgarian", confidence = ConfidenceOfLanguage(detection, "bg") });
+            list.Add(new LanguagesInfo() { language = "Russian", confidence = ConfidenceOfLanguage(detection, "ru") });
             return list;
         }
 
-        public float ConfidenceOfLanguage(DetectionInfo detection, string language)
+        public List<DetectionInfo> GetDetectedWords(IList<Detection> detections)
         {
-            detection.confidence = (detection.confidence > 10 ? 10 : detection.confidence) * 10;
-            switch (detection.language)
+            var list = new List<DetectionInfo>();
+            foreach (var detection in detections)
+            {
+                list.Add(new DetectionInfo() { text = detection.Text, languages = GetDetectedLanguages(detection) });
+            }
+            return list;
+        }
+
+        public async Task<IList<Detection>> DetectLanguages(IEnumerable<string> words)
+        {
+            TranslationClient client = await TranslationClient.CreateAsync();
+            var detections = await client.DetectLanguagesAsync(words);
+            return detections;
+        }
+
+        public float ConfidenceOfLanguage(Detection detection, string language)
+        {
+            switch (detection.Language)
             {
                 case "en":
                     {
-                        return language == "en" ? detection.confidence : 0;
+                        return language == "en" ? detection.Confidence * 100 : 0;
                     }
                 case "es":
                     {
-                        return language == "es" ? detection.confidence : 0;
+                        return language == "es" ? detection.Confidence * 100 : 0;
                     }
                 case "pt":
                     {
-                        return language == "pt" ? detection.confidence : 0;
+                        return language == "pt" ? detection.Confidence * 100 : 0;
                     }
                 case "ru":
                     {
-                        return language == "ru" ? detection.confidence : 0;
+                        return language == "ru" ? detection.Confidence * 100 : 0;
                     }
                 case "bg":
                     {
-                        return language == "bg" ? detection.confidence : 0;
+                        return language == "bg" ? detection.Confidence * 100 : 0;
                     }
                 default:
                     {
                         return 0;
                     }
             }
-        }
-        
-        private void InitializeRestClient()
-        {
-            RestClient = new RestClient("http://ws.detectlanguage.com");
-            RestClient.Authenticator = new HttpBasicAuthenticator("c37188593096b01ad94173d7061e5bbb", "");
-        }
-
-        public IRestResponse SendRequestToDetect(string text)
-        {
-            var request = new RestRequest("/0.2/detect", Method.POST);
-            request.AddParameter("q", text);
-            return RestClient.Execute(request);
         }
     }
 }
