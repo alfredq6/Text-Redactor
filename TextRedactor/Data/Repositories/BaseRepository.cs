@@ -15,24 +15,25 @@ namespace TextRedactor.Data.Repositories
             connection = new SQLiteConnection(@"DataSource=C:/sqlite/TextRedactorDB.db");
         }
 
-        protected void OpenCloseConnection(Action action)
+        protected void ExecuteCommandInConnection(Action<SQLiteCommand> action)
         {
             connection.Open();
-            action?.Invoke();
+            using (var command = new SQLiteCommand(connection))
+            {
+                action?.Invoke(command);
+            }
             connection.Close();
         }
 
         public IEnumerable<TModel> GetAll(string name)
         {
             List<TModel> table = null;
-            OpenCloseConnection(() => {
-                using (var command = new SQLiteCommand(connection))
-                {
-                    command.CommandText = $"select * from {name}";
-                    SQLiteDataReader reader = command.ExecuteReader();
-                    table = reader.Cast<TModel>().ToList();
-                    reader.Close();
-                }
+            ExecuteCommandInConnection((command) =>
+            {
+                command.CommandText = $"select * from {name}";
+                SQLiteDataReader reader = command.ExecuteReader();
+                table = reader.Cast<TModel>().ToList();
+                reader.Close();
             });
             return table;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
+using TextRedactor.Buiseness;
 using TextRedactor.Data.Models;
 
 namespace TextRedactor.Data.Repositories
@@ -11,31 +12,50 @@ namespace TextRedactor.Data.Repositories
     {
         public UserRepository() : base()
         {
-            
+
         }
 
         public bool CheckUserSignIn(string name, string password)
         {
             bool isExist = false;
-            OpenCloseConnection(() =>
+            ExecuteCommandInConnection((command) =>
             {
-                var command = new SQLiteCommand(connection);
-                command.CommandText = $"select * from Users where Name = '{name}' and Password = '{password}'";
+                command.CommandText = $"select * from Users where Name = '{name}'";
                 var reader = command.ExecuteReader();
-                isExist = reader.HasRows;
+                if (reader.HasRows)
+                    while (reader.Read())
+                    {
+                        isExist = Crypto.VerifyHashedPassword(reader.GetFieldValue<string>(2), password);
+                    }
             });
             return isExist;
         }
 
-        public bool Create(string name, string password)
+        public User GetByName(string name)
         {
-            OpenCloseConnection(() =>
+            User user = null;
+            ExecuteCommandInConnection((command) =>
             {
-                var command = new SQLiteCommand(connection);
+                command.CommandText = $"select * from Users where Name = '{name}'";
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    user = new User() { Id = reader.GetFieldValue<long>(0), Name = reader.GetFieldValue<string>(1) };
+                }
+                reader.Close();
+            });
+            return user;
+        }
+
+        public User Create(string name, string password)
+        {
+            ExecuteCommandInConnection((command) =>
+            {
+                password = Crypto.HashPassword(password);
                 command.CommandText = $"insert into Users(Name, Password) values ('{name}', '{password}')";
                 command.ExecuteNonQuery();
             });
-            return false;
+            return GetByName(name);
         }
     }
 }

@@ -29,28 +29,28 @@ namespace TextRedactor.Buiseness
 
         public float ConfidenceOfLanguage(DetectionInfo detection, string language)
         {
-
+            detection.confidence = (detection.confidence > 10 ? 10 : detection.confidence) * 10;
             switch (detection.language)
             {
                 case "en":
                     {
-                        return language == "en" ? detection.confidence * 10 : 0;
+                        return language == "en" ? detection.confidence : 0;
                     }
                 case "es":
                     {
-                        return language == "es" ? detection.confidence * 10 : 0;
+                        return language == "es" ? detection.confidence : 0;
                     }
                 case "pt":
                     {
-                        return language == "pt" ? detection.confidence * 10 : 0;
+                        return language == "pt" ? detection.confidence : 0;
                     }
                 case "ru":
                     {
-                        return language == "ru" ? detection.confidence * 10 : 0;
+                        return language == "ru" ? detection.confidence : 0;
                     }
                 case "bg":
                     {
-                        return language == "bg" ? detection.confidence * 10 : 0;
+                        return language == "bg" ? detection.confidence : 0;
                     }
                 default:
                     {
