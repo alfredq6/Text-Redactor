@@ -25,7 +25,7 @@ namespace TextRedactor.Data.Repositories
                         UserId = userId,
                         QueriesCount = reader.GetFieldValue<long>(2),
                         LastTimeLoginId = reader.GetFieldValue<DateTime>(3),
-                        AverageTimeBetweenQueries = reader.GetFieldValue<DateTime>(4)
+                        AverageTimeBetweenQueries = reader.GetFieldValue<long>(4)
                     });
                 }
             });

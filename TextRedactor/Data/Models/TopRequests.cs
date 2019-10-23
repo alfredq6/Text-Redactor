@@ -12,6 +12,6 @@ namespace TextRedactor.Data.Models
         public long UserId { get; set; }
         public long QueriesCount { get; set; }
         public DateTime LastTimeLoginId { get; set; }
-        public DateTime AverageTimeBetweenQueries { get; set; }
+        public long AverageTimeBetweenQueries { get; set; }
     }
 }
