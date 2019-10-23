@@ -3,16 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using RestSharp;
-using RestSharp.Authenticators;
-using Newtonsoft.Json;
 using TextRedactor.Buiseness;
+using TextRedactor.Buiseness.JSONModels;
 using TextRedactor.Data.Models;
+using TextRedactor.Data.Repositories;
 
 namespace TextRedactor.Controllers
 {
     public class RedactorController : Controller
     {
+        private readonly QueryRepository queryRepository;
+        private readonly DetectedWordsRepository detectedWordsRepository;
+        private readonly TopRequestsRepository topRequestsRepository;
+        public RedactorController(BaseRepository<Query> _queryRepository, BaseRepository<DetectedWord> _detectedWordsRepository, BaseRepository<TopRequests> _topRequestsRepository)
+        {
+            queryRepository = (QueryRepository)_queryRepository;
+            detectedWordsRepository = (DetectedWordsRepository)_detectedWordsRepository;
+            topRequestsRepository = (TopRequestsRepository)_topRequestsRepository;
+        }
+
         public static User CurrentUser { get; private set; }
 
         [HttpGet]
@@ -23,10 +32,7 @@ namespace TextRedactor.Controllers
                 CurrentUser = user;
                 return View();
             }
-            else
-            {
-                return RedirectToAction("SignIn", "Account");
-            }
+            return RedirectToAction("SignIn", "Account");
         }
 
         [HttpPost]
@@ -35,12 +41,26 @@ namespace TextRedactor.Controllers
             if (CurrentUser != null)
             {
                 var detector = new Detector();
-                return Json(detector.GetDetectedWords(await detector.DetectLanguages(words)));
+                var detections = detector.GetDetectedWords(await detector.DetectLanguages(words));
+                var query = queryRepository.Insert(CurrentUser.Id);
+                foreach (var el in detections)
+                {
+                    var languageInfo = el.languages.Where(x => x.confidence != 0).FirstOrDefault() ?? new LanguagesInfo();
+                    detectedWordsRepository.Insert(CurrentUser.Id, query.Id, el.text, languageInfo.language, languageInfo.confidence);
+                }
+                return Json(detections);
             }
-            else
+            return RedirectToAction("SignIn", "Account");
+        }
+
+        [HttpPost]
+        public IActionResult UpdateTopRequestsTable()
+        {
+            if (CurrentUser != null)
             {
-                return RedirectToAction("SignIn", "Account");
+                return Json(topRequestsRepository.GetAll("TopRequests"));
             }
+            return RedirectToAction("SignIn", "Account");
         }
     }
 }

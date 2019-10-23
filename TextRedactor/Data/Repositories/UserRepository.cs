@@ -10,10 +10,7 @@ namespace TextRedactor.Data.Repositories
 {
     public class UserRepository : BaseRepository<User>
     {
-        public UserRepository() : base()
-        {
-
-        }
+        public UserRepository() : base() { }
 
         public bool CheckUserSignIn(string name, string password)
         {
@@ -28,6 +25,8 @@ namespace TextRedactor.Data.Repositories
                         isExist = Crypto.VerifyHashedPassword(reader.GetFieldValue<string>(2), password);
                     }
             });
+            if (isExist)
+                InsertLoginTime(GetByName(name).Id);
             return isExist;
         }
 
@@ -55,7 +54,17 @@ namespace TextRedactor.Data.Repositories
                 command.CommandText = $"insert into Users(Name, Password) values ('{name}', '{password}')";
                 command.ExecuteNonQuery();
             });
-            return GetByName(name);
+            var user = GetByName(name);
+            InsertLoginTime(user.Id);
+            return user;
+        }
+
+        private void InsertLoginTime(long userId)
+        {
+            ExecuteCommandInConnection((command) => {
+                command.CommandText = $"insert into LoginTimeLog (UserId, LastTimeLogin) values ({userId}, datetime('now'))";
+                command.ExecuteNonQuery();
+            });
         }
     }
 }

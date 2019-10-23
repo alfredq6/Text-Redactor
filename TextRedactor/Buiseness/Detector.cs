@@ -1,10 +1,12 @@
-﻿using Google.Cloud.Translation.V2;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Translation.V2;
 using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TextRedactor.Buiseness.JSONModels;
 
 namespace TextRedactor.Buiseness
 {
@@ -33,6 +35,8 @@ namespace TextRedactor.Buiseness
 
         public async Task<IList<Detection>> DetectLanguages(IEnumerable<string> words)
         {
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", @"C:\Users\student\source\repos\TextRedactor\api-key.json");
+            string Pathsave = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
             TranslationClient client = await TranslationClient.CreateAsync();
             var detections = await client.DetectLanguagesAsync(words);
             return detections;

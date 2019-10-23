@@ -35,7 +35,10 @@ namespace TextRedactor
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<BaseRepository<User>, UserRepository>();
-
+            services.AddTransient<BaseRepository<Query>, QueryRepository>();
+            services.AddTransient<BaseRepository<LoginTimeLog>, LoginTimeLogRepository>();
+            services.AddTransient<BaseRepository<DetectedWord>, DetectedWordsRepository>();
+            services.AddTransient<BaseRepository<TopRequests>, TopRequestsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

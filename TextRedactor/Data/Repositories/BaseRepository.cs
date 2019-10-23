@@ -25,12 +25,12 @@ namespace TextRedactor.Data.Repositories
             connection.Close();
         }
 
-        public IEnumerable<TModel> GetAll(string name)
+        public IEnumerable<TModel> GetAll(string modelName)
         {
-            List<TModel> table = null;
+            List<TModel> table = new List<TModel>();
             ExecuteCommandInConnection((command) =>
             {
-                command.CommandText = $"select * from {name}";
+                command.CommandText = $"select * from {modelName}";
                 SQLiteDataReader reader = command.ExecuteReader();
                 table = reader.Cast<TModel>().ToList();
                 reader.Close();

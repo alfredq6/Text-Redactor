@@ -6,11 +6,10 @@ using TextRedactor.Data.Interfaces;
 
 namespace TextRedactor.Data.Models
 {
-    public class User : IModel
+    public class LoginTimeLog : IModel
     {
         public long Id { get; set; }
-        public string Name { get; set; }
-        public string Password { get; set; }
-        public long LastTimeLoginId { get; set; }
+        public long UserId { get; set; }
+        public DateTime LastTimeLogin { get; set; }
     }
 }
