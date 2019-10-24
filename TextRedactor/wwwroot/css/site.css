@@ -4,3 +4,15 @@
     margin: 50px 0px 100px 0px;
     font-weight: bold;
 }
+
+.block-float-right {
+    float: right;
+}
+
+.block-float-left {
+    float: left;
+}
+
+.inline-container div {
+    display: inline-block;
+}

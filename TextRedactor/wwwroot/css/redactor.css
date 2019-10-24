@@ -1,5 +1,5 @@
 ﻿.word:hover {
-    background-color: #fff393;
+    background-color: black;
 }
 
 .word {
@@ -19,6 +19,13 @@
     margin: 10px 30px 10px 30px;
     padding: 10px 0 10px 0;
     font-size: 20pt;
+}
+
+.text-block {
+    background-color: rgba(221, 53, 156, 0.69) !important;
+    border-radius: 10px;
+    color: white !important;
+    padding: 15px;
 }
 
 textarea {

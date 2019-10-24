@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TextRedactor.Buiseness;
 using TextRedactor.Buiseness.JSONModels;
@@ -11,6 +12,7 @@ using TextRedactor.Models;
 
 namespace TextRedactor.Controllers
 {
+    [Authorize]
     public class RedactorController : Controller
     {
         private readonly QueryRepository queryRepository;
@@ -32,66 +34,52 @@ namespace TextRedactor.Controllers
             loginTimeLogRepository = (LoginTimeLogRepository)_loginTimeLogRepository;
         }
 
-        public static User CurrentUser { get; private set; }
-
         [HttpGet]
-        public IActionResult Redaction(RedactionViewModel model)
+        public IActionResult Redaction()
         {
-            if (model.UserId != 0)
-            {
-                CurrentUser = userRepository.Get(id: model.UserId);
-                return View();
-            }
-            return RedirectToAction("SignIn", "Account");
+            return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> DetectLanguages(IEnumerable<string> words)
         {
-            if (CurrentUser != null)
+            if (words.Count() != 0)
             {
-                if (words.Count() != 0)
+                var user = userRepository.Get(name: User.Identity.Name);
+                var detector = new Detector();
+                var detections = detector.GetDetectedWords(await detector.DetectLanguages(words));
+                var query = queryRepository.Insert(user.Id);
+                foreach (var el in detections)
                 {
-                    var detector = new Detector();
-                    var detections = detector.GetDetectedWords(await detector.DetectLanguages(words));
-                    var query = queryRepository.Insert(CurrentUser.Id);
-                    foreach (var el in detections)
-                    {
-                        var languageInfo = el.languages.Where(x => x.confidence != 0).FirstOrDefault() ?? new LanguagesInfo();
-                        detectedWordsRepository.Insert(CurrentUser.Id, query.Id, el.text, languageInfo.language, languageInfo.confidence);
-                    }
-                    return Json(detections);
+                    var languageInfo = el.languages.Where(x => x.confidence != 0).FirstOrDefault() ?? new LanguagesInfo();
+                    detectedWordsRepository.Insert(user.Id, query.Id, el.text, languageInfo.language, languageInfo.confidence);
                 }
-                else
-                {
-                    return Json(new { status = "failed" });
-                }
+                return Json(detections);
             }
-            return RedirectToAction("SignIn", "Account");
+            else
+            {
+                return Json(new { status = "failed" });
+            }
         }
 
         [HttpPost]
         public IActionResult UpdateTopRequestsTable()
         {
-            if (CurrentUser != null)
+            var listTopRequests = topRequestsRepository.GetAll("TopRequests").OrderByDescending(x => x.QueriesCount).Take(10);
+            int i = 1;
+            var listTopRequestsInfo = listTopRequests.Select(userRow =>
             {
-                var listTopRequests = topRequestsRepository.GetAll("TopRequests").OrderByDescending(x => x.QueriesCount).Take(10);
-                int i = 1;
-                var listTopRequestsInfo = listTopRequests.Select(userRow =>
+                var user = userRepository.Get(id: userRow.UserId);
+                return new TopRequestsInfo()
                 {
-                    var user = userRepository.Get(id: userRow.UserId);
-                    return new TopRequestsInfo()
-                    {
-                        userName = user.Name,
-                        averageTimeBetweenQueriesInMinutes = userRow.AverageTimeBetweenQueries,
-                        queriesCount = userRow.QueriesCount,
-                        lastLoginTime = loginTimeLogRepository.GetByUserId(user.Id).Last().LastTimeLogin.ToString(),
-                        number = i++
-                    };
-                });
-                return Json(listTopRequestsInfo);
-            }
-            return RedirectToAction("SignIn", "Account");
+                    userName = user.Name,
+                    averageTimeBetweenQueriesInMinutes = userRow.AverageTimeBetweenQueries,
+                    queriesCount = userRow.QueriesCount,
+                    lastLoginTime = loginTimeLogRepository.GetByUserId(user.Id).Last().LastTimeLogin.ToString(),
+                    number = i++
+                };
+            });
+            return Json(listTopRequestsInfo);
         }
     }
 }

@@ -8,7 +8,6 @@ namespace TextRedactor.Models
 {
     public class RedactionViewModel
     {
-        public string UserName { get; set; }
-        public long UserId { get; set; }
+
     }
 }

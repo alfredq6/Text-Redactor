@@ -1,7 +1,9 @@
 ﻿@model RedactionViewModel
 
-<div class="container-fluid">
-    <div></div>
+<div class="container-fluid flex-container">
+    <div>
+        <a class="btn btn-danger block-float-right" id="btn-log-out" asp-controller="Account" asp-action="SignOut" onmouseenter="ChangeToLogOut('LogOut')" onmouseleave="ChangeToName('@User.Identity.Name')" style="margin-top: 20px">@User.Identity.Name</a>
+    </div>
     <div class="head-text container-fluid">
         Enter something and the application detect word's languages
     </div>
@@ -11,7 +13,7 @@
         <textarea class="form-control" placeholder="Enter something" rows="5"></textarea>
     </div>
     <button class="btn btn-info" id="btn-suc">Detect</button><br />
-    <div>
+    <div class="text-block">
         <div id="correct_text"></div>
     </div>
     <table class="table-bordered table-responsive" id="top-requests-table" style="width: 100%">

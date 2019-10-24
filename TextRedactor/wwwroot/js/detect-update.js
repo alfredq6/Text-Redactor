@@ -56,5 +56,11 @@
     });
     $("#correct_text").delegate('.word', 'mouseleave', function () {
         $(this).children('.popup').toggle('fast');
-    });
+    });   
 });
+function ChangeToLogOut(logout) {
+    $('#btn-log-out').text(logout);
+}
+function ChangeToName(name) {
+    $('#btn-log-out').text(name);
+}
