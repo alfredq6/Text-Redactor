@@ -26,20 +26,25 @@ namespace TextRedactor.Data.Repositories
                     }
             });
             if (isExist)
-                InsertLoginTime(GetByName(name).Id);
+                InsertLoginTime(Get(name).Id);
             return isExist;
         }
 
-        public User GetByName(string name)
+        public User Get(string name = null, long id = 0)
         {
             User user = null;
             ExecuteCommandInConnection((command) =>
             {
-                command.CommandText = $"select * from Users where Name = '{name}'";
+                command.CommandText = name != null ? $"select * from Users where Name = '{name}'" : $"select * from Users where Id = '{id}'";
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    user = new User() { Id = reader.GetFieldValue<long>(0), Name = reader.GetFieldValue<string>(1) };
+                    user = new User()
+                    {
+                        Id = reader.GetFieldValue<long>(0),
+                        Name = reader.GetFieldValue<string>(1),
+                        LastTimeLoginId = reader.GetValue(3) is DBNull ? 0 : (long)reader.GetValue(3)
+                    };
                 }
                 reader.Close();
             });
@@ -54,7 +59,7 @@ namespace TextRedactor.Data.Repositories
                 command.CommandText = $"insert into Users(Name, Password) values ('{name}', '{password}')";
                 command.ExecuteNonQuery();
             });
-            var user = GetByName(name);
+            var user = Get(name);
             InsertLoginTime(user.Id);
             return user;
         }
@@ -62,7 +67,7 @@ namespace TextRedactor.Data.Repositories
         private void InsertLoginTime(long userId)
         {
             ExecuteCommandInConnection((command) => {
-                command.CommandText = $"insert into LoginTimeLog (UserId, LastTimeLogin) values ({userId}, datetime('now'))";
+                command.CommandText = $"insert into LoginTimeLog (UserId, LastTimeLogin) values ({userId}, '{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}')";
                 command.ExecuteNonQuery();
             });
         }

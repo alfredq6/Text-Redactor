@@ -39,6 +39,7 @@ namespace TextRedactor
             services.AddTransient<BaseRepository<LoginTimeLog>, LoginTimeLogRepository>();
             services.AddTransient<BaseRepository<DetectedWord>, DetectedWordsRepository>();
             services.AddTransient<BaseRepository<TopRequests>, TopRequestsRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +54,8 @@ namespace TextRedactor
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", @"C:\Users\student\source\repos\TextRedactor\api-key.json");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

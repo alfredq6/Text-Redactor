@@ -31,7 +31,7 @@ namespace TextRedactor.Data.Repositories
         {
             ExecuteCommandInConnection((command) =>
             {
-                command.CommandText = $"insert into Queries (UserId, Time) values ({userId}, datetime('now'))";
+                command.CommandText = $"insert into Queries (UserId, Time) values ({userId}, '{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}')";
                 command.ExecuteNonQuery();
             });
             return GetByUserId(userId).Last();

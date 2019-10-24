@@ -29,8 +29,10 @@ namespace TextRedactor.Controllers
             {
                 if (!userRepository.CheckUserSignIn(model.Name, model.Password))
                     ModelState.AddModelError(string.Empty, "Invalid name or password");
-                else
-                    return RedirectToAction("TextRedact", "Redactor", userRepository.GetByName(model.Name));
+                else {
+                    var user = userRepository.Get(model.Name);
+                    return RedirectToAction("Redaction", "Redactor", new RedactionViewModel() { UserId = user.Id, UserName = user.Name });
+                }
             }
             return View(model);
         }
@@ -49,8 +51,8 @@ namespace TextRedactor.Controllers
                 {
                     if (model.Password == model.RepeatePassword)
                     {
-                        userRepository.Create(model.Name, model.Password);
-                        return RedirectToAction("TextRedact", "Redactor", userRepository.GetByName(model.Name));
+                        var user = userRepository.Create(model.Name, model.Password);
+                        return RedirectToAction("Redaction", "Redactor", new RedactionViewModel() { UserId = user.Id, UserName = user.Name });
                     }
                     ModelState.AddModelError(string.Empty, "Repeated password isn't equals password");
                 }

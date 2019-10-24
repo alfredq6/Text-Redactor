@@ -25,6 +25,17 @@ textarea {
     resize: none;
 }
 
+#top-requests-table {
+    border-radius: 5px;
+    padding: 10px;
+    margin: 100px 0 0 0;
+}
+
+#top-requests-table tr {
+    border: solid 1px solid;
+    margin: 5px 0 5px 0;
+}
+
 .word .popup {
     font-weight: 100;
     font-size: 12px;

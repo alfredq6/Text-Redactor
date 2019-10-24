@@ -24,18 +24,5 @@ namespace TextRedactor.Data.Repositories
             }
             connection.Close();
         }
-
-        public IEnumerable<TModel> GetAll(string modelName)
-        {
-            List<TModel> table = new List<TModel>();
-            ExecuteCommandInConnection((command) =>
-            {
-                command.CommandText = $"select * from {modelName}";
-                SQLiteDataReader reader = command.ExecuteReader();
-                table = reader.Cast<TModel>().ToList();
-                reader.Close();
-            });
-            return table;
-        }
     }
 }
