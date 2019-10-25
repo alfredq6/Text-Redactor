@@ -2,7 +2,7 @@
 
 <div class="container-fluid flex-container">
     <div>
-        <a class="btn btn-danger block-float-right" id="btn-log-out" asp-controller="Account" asp-action="SignOut" onmouseenter="ChangeToLogOut('LogOut')" onmouseleave="ChangeToName('@User.Identity.Name')" style="margin-top: 20px">@User.Identity.Name</a>
+        <a class="btn btn-danger block-float-right" id="btn-log-out" asp-controller="Account" asp-action="SignOut" onmouseenter="ChangeToLogOut('LogOut')" onmouseleave="ChangeToName('@User.Identity.Name')">@User.Identity.Name</a>
     </div>
     <div class="head-text container-fluid">
         Enter something and the application detect word's languages
@@ -16,7 +16,7 @@
     <div class="text-block">
         <div id="correct_text"></div>
     </div>
-    <table class="table-bordered table-responsive" id="top-requests-table" style="width: 100%">
+    <table class="table-bordered table-responsive" id="top-requests-table">
         <tr class="table-head">
             <th>#</th>
             <th>User</th>

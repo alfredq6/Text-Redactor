@@ -33,14 +33,13 @@ textarea {
 }
 
 #top-requests-table {
-    border-radius: 5px;
     padding: 10px;
     margin: 100px 0 0 0;
+    width: 100%;
 }
 
-#top-requests-table tr {
-    border: solid 1px solid;
-    margin: 5px 0 5px 0;
+#btn-log-out {
+    margin-top: 20px;
 }
 
 .word .popup {

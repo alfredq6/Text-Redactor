@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -57,7 +58,7 @@ namespace TextRedactor
                 app.UseHsts();
             }
 
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", @"C:\Users\student\source\repos\TextRedactor\api-key.json");
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", Path.GetFullPath("api-key.json"));
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -67,7 +68,7 @@ namespace TextRedactor
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Account}/{action=SignIn}/{id?}");
+                    template: "{controller=Redactor}/{action=Redaction}/{id?}");
             });
         }
     }

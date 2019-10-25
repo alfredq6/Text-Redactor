@@ -62,6 +62,7 @@ namespace TextRedactor.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult UpdateTopRequestsTable()
         {
